@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0haevpk" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.13.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.19.0">
+  <bpmn:process id="TestFileServiceConnector" isExecutable="true" camunda:historyTimeToLive="3">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0wij7gk</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0wij7gk" sourceRef="StartEvent_1" targetRef="Activity_03mntty" />
+    <bpmn:endEvent id="Event_1ppiyb7">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_1k19l6w</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1k19l6w" sourceRef="Activity_03mntty" targetRef="Event_1ppiyb7" />
+    <bpmn:serviceTask id="Activity_03mntty" name="FIleService" camunda:class="com.codot.camundaconnectors.filestorage.FileServiceFunction">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="operation">upload</camunda:inputParameter>
+          <camunda:inputParameter name="fileName">test-image.jpg</camunda:inputParameter>
+          <camunda:inputParameter name="filePath">uploadFiles</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0wij7gk</bpmn:incoming>
+      <bpmn:outgoing>Flow_1k19l6w</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="TestFileServiceConnector">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ppiyb7_di" bpmnElement="Event_1ppiyb7">
+        <dc:Bounds x="432" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_05lfu0y_di" bpmnElement="Activity_03mntty">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0wij7gk_di" bpmnElement="Flow_0wij7gk">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1k19l6w_di" bpmnElement="Flow_1k19l6w">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="432" y="117" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
