@@ -7,16 +7,18 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+@Component
 public class FileOperation {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileOperation.class);
 
 	public static String upload(String url, String filePath, String fileName) {
 		LOGGER.info(
 				"Upload function has been called with the following values:"
-						+ "\nFilePath: "
+						+ " FilePath="
 						+ filePath
-						+ "\nFileName: "
+						+ ", FileName="
 						+ fileName);
 		File file = new File(new File(filePath), fileName);
 		if (file.exists()) {
@@ -63,9 +65,9 @@ public class FileOperation {
 	public static String get(String url, String guid, String savePath) {
 		LOGGER.info(
 				"Get function has been called with the following values:"
-						+ "\nGUID: "
+						+ " GUID="
 						+ guid
-						+ "\nSavePath: "
+						+ ", SavePath="
 						+ savePath);
 		Connection.Response response;
 		try {
@@ -105,7 +107,7 @@ public class FileOperation {
 	}
 
 	public static String delete(String url, String guid) {
-		LOGGER.info("Delete function has been called with the following values:" + "\nGUID: " + guid);
+		LOGGER.info("Delete function has been called with the following values: GUID=" + guid);
 		Connection.Response response;
 		try {
 			response =
