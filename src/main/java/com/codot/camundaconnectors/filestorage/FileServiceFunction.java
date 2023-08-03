@@ -14,12 +14,10 @@ public class FileServiceFunction implements JavaDelegate {
 	@Override
 	public void execute(DelegateExecution delegateExecution) throws Exception {
 		Properties properties = getProperties();
-		String url = properties.getProperty("url");
-		LOGGER.debug("url=" + url);
+		String url = validateURL(properties.getProperty("url"));
+		LOGGER.info("url=" + url);
 
 		String operation = (String) delegateExecution.getVariable("operation");
-		LOGGER.debug("operation=" + operation);
-
 		switch (operation) {
 			case "upload" -> {
 				String guid = FileOperation.upload(
@@ -54,5 +52,10 @@ public class FileServiceFunction implements JavaDelegate {
 		fis.close();
 
 		return property;
+	}
+
+	private static String validateURL(String URL){
+		if (URL.endsWith("/"))	return URL;
+		else return URL + "/";
 	}
 }
