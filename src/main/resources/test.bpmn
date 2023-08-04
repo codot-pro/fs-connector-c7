@@ -16,6 +16,7 @@
           <camunda:inputParameter name="operation">upload</camunda:inputParameter>
           <camunda:inputParameter name="fileName">test-image.jpg</camunda:inputParameter>
           <camunda:inputParameter name="filePath">uploadFiles</camunda:inputParameter>
+          <camunda:inputParameter name="url">http://localhost:3000/api/file/</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0wij7gk</bpmn:incoming>

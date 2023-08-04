@@ -13,8 +13,13 @@ public class FileServiceFunction implements JavaDelegate {
 
 	@Override
 	public void execute(DelegateExecution delegateExecution) throws Exception {
-		Properties properties = getProperties();
-		String url = validateURL(properties.getProperty("url"));
+		// using config.properties
+		// Properties properties = getProperties();
+		// String url = validateURL(properties.getProperty("url"));
+
+		// using template
+
+		String url = validateURL((String) delegateExecution.getVariable("url"));
 
 		String operation = (String) delegateExecution.getVariable("operation");
 		switch (operation) {
@@ -42,6 +47,7 @@ public class FileServiceFunction implements JavaDelegate {
 		}
 	}
 
+	// using config.properties
 	private static Properties getProperties() throws IOException {
 		FileInputStream fis;
 		Properties property = new Properties();

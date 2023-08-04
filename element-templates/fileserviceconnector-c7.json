@@ -99,10 +99,27 @@
       }
     },
     {
+      "label": "File service URL",
+      "description": "REST endpoint.",
+      "type": "String",
+      "feel": "required",
+      "group": "inputs",
+      "constraints": {
+        "notEmpty": true
+      },
+      "binding": {
+        "type": "camunda:inputParameter",
+        "name": "url"
+      }
+    },
+    {
       "label": "Result Variable",
       "description": "Name of variable to store the response in",
       "group": "output",
       "type": "String",
+      "constraints": {
+        "notEmpty": true
+      },
       "binding": {
         "type": "camunda:outputParameter",
         "source": "${fs_result}"

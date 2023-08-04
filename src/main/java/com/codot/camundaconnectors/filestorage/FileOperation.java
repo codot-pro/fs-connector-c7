@@ -16,10 +16,9 @@ public class FileOperation {
 	public static String upload(String url, String filePath, String fileName) {
 		LOGGER.info(
 				"Upload function has been called with the following values:"
-						+ " FilePath="
-						+ filePath
-						+ ", FileName="
-						+ fileName);
+						+ " FilePath="	+ filePath
+						+ ", FileName=" + fileName
+						+ ", URL="+ url);
 		File file = new File(new File(filePath), fileName);
 		if (file.exists()) {
 			LOGGER.debug("File exists");
@@ -67,7 +66,8 @@ public class FileOperation {
 		LOGGER.info(
 				"Get function has been called with the following values:"
 						+ " GUID=" + guid
-						+ ", SavePath=" + savePath);
+						+ ", SavePath=" + savePath
+						+ ", URL="+ url);
 		Connection.Response response;
 		try {
 			response =
@@ -105,7 +105,7 @@ public class FileOperation {
 	}
 
 	public static String delete(String url, String guid) {
-		LOGGER.info("Delete function has been called with the following values: GUID=" + guid);
+		LOGGER.info("Delete function has been called with the following values: GUID=" + guid + ", URL="+ url);
 		Connection.Response response;
 		try {
 			response =

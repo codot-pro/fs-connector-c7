@@ -18,10 +18,11 @@
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="fileId" />
-          <camunda:inputParameter name="operation">upload</camunda:inputParameter>
-          <camunda:inputParameter name="filePath">uploadFiles</camunda:inputParameter>
+          <camunda:inputParameter name="url">http://localhost:3000/api/file/</camunda:inputParameter>
           <camunda:inputParameter name="fileName">test-image.jpg</camunda:inputParameter>
-          <camunda:outputParameter name="result">${uploadResult}</camunda:outputParameter>
+          <camunda:inputParameter name="filePath">uploadFiles</camunda:inputParameter>
+          <camunda:inputParameter name="operation">upload</camunda:inputParameter>
+          <camunda:outputParameter name="result">${fs_result}</camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0wij7gk</bpmn:incoming>
@@ -40,7 +41,7 @@
         <dc:Bounds x="410" y="77" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_049c449_di" bpmnElement="Activity_03mntty">
+      <bpmndi:BPMNShape id="Activity_0nsdgkq_di" bpmnElement="Activity_03mntty">
         <dc:Bounds x="270" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0wij7gk_di" bpmnElement="Flow_0wij7gk">
