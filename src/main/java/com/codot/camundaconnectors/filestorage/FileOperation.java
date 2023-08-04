@@ -16,10 +16,9 @@ public class FileOperation {
 	public static String upload(String url, String filePath, String fileName) {
 		LOGGER.info(
 				"Upload function has been called with the following values:"
-						+ " FilePath="
-						+ filePath
-						+ ", FileName="
-						+ fileName);
+						+ " FilePath="	+ filePath
+						+ ", FileName=" + fileName
+						+ ", URL="+ url);
 		File file = new File(new File(filePath), fileName);
 		if (file.exists()) {
 			LOGGER.debug("File exists");
@@ -53,22 +52,22 @@ public class FileOperation {
 								+ response.statusMessage()
 								+ " - "
 								+ (body.has("message") ? body.getString("message") : ""));
+				throw new RuntimeException("Response statusCode != 200");
 			} catch (IOException e) {
 				LOGGER.error(e.toString());
 				throw new RuntimeException(e);
 			}
 		}
 		LOGGER.error("File not created");
-		return null;
+		throw new RuntimeException("File not created");
 	}
 
 	public static String get(String url, String guid, String savePath) {
 		LOGGER.info(
 				"Get function has been called with the following values:"
-						+ " GUID="
-						+ guid
-						+ ", SavePath="
-						+ savePath);
+						+ " GUID=" + guid
+						+ ", SavePath=" + savePath
+						+ ", URL="+ url);
 		Connection.Response response;
 		try {
 			response =
@@ -76,8 +75,7 @@ public class FileOperation {
 			if (response.statusCode() == 200) {
 				LOGGER.info("Response statusCode = 200. File received");
 				byte[] fileContent = response.bodyAsBytes();
-				File filePath = new File(savePath);
-				File file = new File(filePath, guid);
+				File file = new File(new File(savePath), guid);
 				try (BufferedOutputStream outputStream =
 						     new BufferedOutputStream(new FileOutputStream(file))) {
 					LOGGER.debug("file on path \"" + savePath + guid + "\" created");
@@ -99,7 +97,7 @@ public class FileOperation {
 							+ response.statusMessage()
 							+ " - "
 							+ (body.has("message") ? body.getString("message") : ""));
-			return null;
+			throw new RuntimeException("Response statusCode != 200");
 		} catch (IOException e) {
 			LOGGER.error(e.toString());
 			throw new RuntimeException(e);
@@ -107,7 +105,7 @@ public class FileOperation {
 	}
 
 	public static String delete(String url, String guid) {
-		LOGGER.info("Delete function has been called with the following values: GUID=" + guid);
+		LOGGER.info("Delete function has been called with the following values: GUID=" + guid + ", URL="+ url);
 		Connection.Response response;
 		try {
 			response =
@@ -124,6 +122,7 @@ public class FileOperation {
 								+ response.statusMessage()
 								+ " - "
 								+ (body.has("message") ? body.getString("message") : ""));
+				throw new RuntimeException("Response statusCode != 200");
 			}
 			LOGGER.info("Response statusCode = 200. File deleted");
 			return body.getString("message");

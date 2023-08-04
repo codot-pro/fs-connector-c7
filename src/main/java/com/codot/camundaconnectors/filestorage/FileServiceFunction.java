@@ -13,38 +13,41 @@ public class FileServiceFunction implements JavaDelegate {
 
 	@Override
 	public void execute(DelegateExecution delegateExecution) throws Exception {
-		Properties properties = getProperties();
-		String url = properties.getProperty("url");
-		LOGGER.debug("url=" + url);
+		// using config.properties
+		// Properties properties = getProperties();
+		// String url = validateURL(properties.getProperty("url"));
+
+		// using template
+
+		String url = validateURL((String) delegateExecution.getVariable("url"));
 
 		String operation = (String) delegateExecution.getVariable("operation");
-		LOGGER.debug("operation=" + operation);
-
 		switch (operation) {
 			case "upload" -> {
 				String guid = FileOperation.upload(
 						url,
 						(String) delegateExecution.getVariable("filePath"),
 						(String) delegateExecution.getVariable("fileName"));
-				delegateExecution.setVariable("uploadResult", guid); // guid
+				delegateExecution.setVariable("fs_result", guid); // guid
 			}
 			case "get" -> {
 				String path = FileOperation.get(
 						url,
-						(String) delegateExecution.getVariable("guid"),
+						(String) delegateExecution.getVariable("fileId"),
 						(String) delegateExecution.getVariable("filePath"));
-				delegateExecution.setVariable("getResult", path); // path
+				delegateExecution.setVariable("fs_result", path); // path
 			}
 			case "delete" -> {
 				String answer = FileOperation.delete(
 						url,
-						(String) delegateExecution.getVariable("guid"));
-				delegateExecution.setVariable("deleteResult", answer); // deleteResult
+						(String) delegateExecution.getVariable("fileId"));
+				delegateExecution.setVariable("fs_result", answer); // deleteResult
 			}
 			default -> throw new RuntimeException("Operation not found");
 		}
 	}
 
+	// using config.properties
 	private static Properties getProperties() throws IOException {
 		FileInputStream fis;
 		Properties property = new Properties();
@@ -54,5 +57,9 @@ public class FileServiceFunction implements JavaDelegate {
 		fis.close();
 
 		return property;
+	}
+
+	private static String validateURL(String URL){
+		return URL.endsWith("/") ? URL : URL + "/";
 	}
 }
