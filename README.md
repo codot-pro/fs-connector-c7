@@ -61,3 +61,17 @@ If the operation
 - upload - uploaded file ID
 - get - relative path where the file is saved
 - delete - result of deletion ("Delete success")
+
+## Example
+
+Input data for upload
+
+![Upload!](./assets/images/upload.png "Upload")
+
+Input data for get
+
+![Get!](./assets/images/get.png "Get")
+
+Input data for delete
+
+![Delete!](./assets/images/delete.png "Delete")
