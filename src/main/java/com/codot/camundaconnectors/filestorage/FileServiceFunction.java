@@ -15,7 +15,6 @@ public class FileServiceFunction implements JavaDelegate {
 	public void execute(DelegateExecution delegateExecution) throws Exception {
 		Properties properties = getProperties();
 		String url = validateURL(properties.getProperty("url"));
-		LOGGER.info("url=" + url);
 
 		String operation = (String) delegateExecution.getVariable("operation");
 		switch (operation) {
@@ -24,20 +23,20 @@ public class FileServiceFunction implements JavaDelegate {
 						url,
 						(String) delegateExecution.getVariable("filePath"),
 						(String) delegateExecution.getVariable("fileName"));
-				delegateExecution.setVariable("uploadResult", guid); // guid
+				delegateExecution.setVariable("fs_result", guid); // guid
 			}
 			case "get" -> {
 				String path = FileOperation.get(
 						url,
-						(String) delegateExecution.getVariable("guid"),
+						(String) delegateExecution.getVariable("fileId"),
 						(String) delegateExecution.getVariable("filePath"));
-				delegateExecution.setVariable("getResult", path); // path
+				delegateExecution.setVariable("fs_result", path); // path
 			}
 			case "delete" -> {
 				String answer = FileOperation.delete(
 						url,
-						(String) delegateExecution.getVariable("guid"));
-				delegateExecution.setVariable("deleteResult", answer); // deleteResult
+						(String) delegateExecution.getVariable("fileId"));
+				delegateExecution.setVariable("fs_result", answer); // deleteResult
 			}
 			default -> throw new RuntimeException("Operation not found");
 		}
@@ -55,7 +54,6 @@ public class FileServiceFunction implements JavaDelegate {
 	}
 
 	private static String validateURL(String URL){
-		if (URL.endsWith("/"))	return URL;
-		else return URL + "/";
+		return URL.endsWith("/") ? URL : URL + "/";
 	}
 }

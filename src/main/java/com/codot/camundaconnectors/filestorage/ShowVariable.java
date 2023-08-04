@@ -15,14 +15,11 @@ public class ShowVariable implements JavaDelegate {
 	@Override
 	public void execute(DelegateExecution delegateExecution) throws Exception {
 		Map<String, Object> variables = delegateExecution.getVariables();
-		LOGGER.info("");
-		LOGGER.info(delegateExecution.getProcessInstanceId());
 		LOGGER.info("InstanceId("+delegateExecution.getProcessInstanceId()+") Keys and values:");
 		for (Map.Entry<String, Object> entry : variables.entrySet()) {
 			String key = entry.getKey();
 			Object value = entry.getValue();
 			LOGGER.info(key + ": " + value);
 		}
-		LOGGER.info("");
 	}
 }
