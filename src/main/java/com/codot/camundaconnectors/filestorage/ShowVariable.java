@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@Component
+// @Component // Uncomment if you need a debugger
 public class ShowVariable implements JavaDelegate {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ShowVariable.class);
 
