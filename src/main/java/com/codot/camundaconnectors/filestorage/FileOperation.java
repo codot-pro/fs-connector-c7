@@ -2,6 +2,7 @@ package com.codot.camundaconnectors.filestorage;
 
 
 import java.io.*;
+import java.nio.file.Files;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.feel.syntaxtree.In;
@@ -42,8 +43,10 @@ public class FileOperation {
 				if (response.statusCode() == 200)
 					file.delete();
 				else LOGGER.error(Utility.printLog("File not uploaded", delegateExecution));
+				return;
 			} catch (IOException e) {
 				LOGGER.error(Utility.printLog(e.getClass().getSimpleName() + ": " + e, delegateExecution));
+				return;
 			}
 		}
 		LOGGER.error(Utility.printLog("File not created", delegateExecution));
@@ -59,7 +62,7 @@ public class FileOperation {
 			if (response.statusCode() == 200) {
 				byte[] fileContent = response.bodyAsBytes();
 				File file = new File(new File(savePath), guid);
-				try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
+				try (BufferedOutputStream outputStream = new BufferedOutputStream(Files.newOutputStream(file.toPath()))) {
 					for (byte item : fileContent) {
 						outputStream.write(item);
 					}
@@ -69,7 +72,7 @@ public class FileOperation {
 				executionResponse.setResponse(file.getAbsolutePath());
 			}
 		} catch (IOException e) {
-			LOGGER.error(Utility.printLog(e.getClass().getSimpleName() + ": " + e, delegateExecution));
+			LOGGER.error(Utility.printLog(e.getClass().getSimpleName() + ": " + e.getMessage(), delegateExecution));
 		}
 	}
 
@@ -85,7 +88,7 @@ public class FileOperation {
 			executionResponse.setStatusMsg(response.statusMessage());
 			executionResponse.setResponse(response.body());
 		} catch (IOException e) {
-			LOGGER.error(Utility.printLog(e.getClass().getSimpleName() + ": " + e, delegateExecution));
+			LOGGER.error(Utility.printLog(e.getClass().getSimpleName() + ": " + e.getMessage(), delegateExecution));
 		}
 	}
 }

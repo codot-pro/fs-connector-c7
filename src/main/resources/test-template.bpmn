@@ -5,23 +5,19 @@
       <bpmn:outgoing>Flow_0wij7gk</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_0wij7gk" sourceRef="StartEvent_1" targetRef="Activity_03mntty" />
-    <bpmn:sequenceFlow id="Flow_1187hd1" sourceRef="Activity_03mntty" targetRef="Activity_1y1bkxg" />
+    <bpmn:sequenceFlow id="Flow_1187hd1" sourceRef="Activity_03mntty" targetRef="Event_1gz2ozn" />
     <bpmn:endEvent id="Event_1gz2ozn">
-      <bpmn:incoming>Flow_0r7aofd</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_0r7aofd" sourceRef="Activity_1y1bkxg" targetRef="Event_1gz2ozn" />
-    <bpmn:serviceTask id="Activity_1y1bkxg" name="showVariable" camunda:class="com.codot.camundaconnectors.filestorage.ShowVariable">
       <bpmn:incoming>Flow_1187hd1</bpmn:incoming>
-      <bpmn:outgoing>Flow_0r7aofd</bpmn:outgoing>
-    </bpmn:serviceTask>
+    </bpmn:endEvent>
     <bpmn:serviceTask id="Activity_03mntty" name="FIleService" camunda:modelerTemplate="com.codot.camundaconnectors.filestorage.c7" camunda:modelerTemplateVersion="1" camunda:class="com.codot.camundaconnectors.filestorage.FileServiceFunction">
       <bpmn:extensionElements>
         <camunda:inputOutput>
-          <camunda:inputParameter name="fileId" />
-          <camunda:inputParameter name="url">http://localhost:3000/api/file/</camunda:inputParameter>
-          <camunda:inputParameter name="fileName">test-image.jpg</camunda:inputParameter>
           <camunda:inputParameter name="filePath">uploadFiles</camunda:inputParameter>
           <camunda:inputParameter name="operation">upload</camunda:inputParameter>
+          <camunda:inputParameter name="fileName">test-image.jpg</camunda:inputParameter>
+          <camunda:inputParameter name="fileId" />
+          <camunda:inputParameter name="debugMode">true</camunda:inputParameter>
+          <camunda:inputParameter name="url">https://file-service/api/file/</camunda:inputParameter>
           <camunda:outputParameter name="result">${fs_result}</camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
@@ -35,11 +31,7 @@
         <dc:Bounds x="179" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1gz2ozn_di" bpmnElement="Event_1gz2ozn">
-        <dc:Bounds x="552" y="99" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0bxorqb_di" bpmnElement="Activity_1y1bkxg">
-        <dc:Bounds x="410" y="77" width="100" height="80" />
-        <bpmndi:BPMNLabel />
+        <dc:Bounds x="422" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0nsdgkq_di" bpmnElement="Activity_03mntty">
         <dc:Bounds x="270" y="77" width="100" height="80" />
@@ -50,11 +42,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1187hd1_di" bpmnElement="Flow_1187hd1">
         <di:waypoint x="370" y="117" />
-        <di:waypoint x="410" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0r7aofd_di" bpmnElement="Flow_0r7aofd">
-        <di:waypoint x="510" y="117" />
-        <di:waypoint x="552" y="117" />
+        <di:waypoint x="422" y="117" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

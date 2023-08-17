@@ -9,15 +9,17 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class FileServiceFunction implements JavaDelegate {
-	Response response = new Response();
+	private final Response response = new Response();
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileServiceFunction.class);
 
 	@Override
-	public void execute(DelegateExecution delegateExecution) throws Exception {
+	public void execute(DelegateExecution delegateExecution) {
 
 		String url = Utility.validateURL((String) delegateExecution.getVariable("url"));
-
 		String operation = (String) delegateExecution.getVariable("operation");
+		Boolean debug = Boolean.TRUE;
+		if (debug) startEvent(delegateExecution);
+
 		switch (operation) {
 			case "upload":
 				FileOperation.upload(
@@ -51,11 +53,27 @@ public class FileServiceFunction implements JavaDelegate {
 				packRespond(delegateExecution);
 				break;
 		}
+		if (debug) endEvent(delegateExecution);
 	}
 
 	private void packRespond(DelegateExecution delegateExecution){
 		delegateExecution.setVariable("fs_result", response.getResponse());
 		delegateExecution.setVariable("status_code", response.getStatusCode());
 		delegateExecution.setVariable("status_msg", response.getStatusMsg());
+	}
+
+	private void startEvent(DelegateExecution delegateExecution){
+		String log = " {operation="+ delegateExecution.getVariable("operation") +
+				", filePath="+delegateExecution.getVariable("filePath")+
+				", fileName=" + delegateExecution.getVariable("fileName") +
+				", fileId="+ delegateExecution.getVariable("fileId") +
+				", url="+ delegateExecution.getVariable("url") + "}";
+		LOGGER.info(Utility.printLog(log, delegateExecution));
+	}
+
+	private void endEvent(DelegateExecution delegateExecution){
+		LOGGER.info(Utility.printLog("{statusCode: " + response.getStatusCode() + ", statusMsg: "+ response.getStatusMsg() +
+						", response: " + response.getResponse() + "}",
+				delegateExecution));
 	}
 }

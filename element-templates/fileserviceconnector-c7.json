@@ -113,6 +113,34 @@
       }
     },
     {
+      "label": "status code",
+      "description": "Name of variable to store the response in",
+      "group": "output",
+      "type": "String",
+      "value": "status_code",
+      "constraints": {
+        "notEmpty": true
+      },
+      "binding": {
+        "type": "camunda:outputParameter",
+        "source": "${status_code}"
+      }
+    },
+    {
+      "label": "status massage",
+      "description": "Name of variable to store the response in",
+      "group": "output",
+      "type": "String",
+      "value": "status_msg",
+      "constraints": {
+        "notEmpty": true
+      },
+      "binding": {
+        "type": "camunda:outputParameter",
+        "source": "${status_msg}"
+      }
+    },
+    {
       "label": "Result Variable",
       "description": "Name of variable to store the response in",
       "group": "output",
@@ -124,6 +152,30 @@
         "type": "camunda:outputParameter",
         "source": "${fs_result}"
       }
+    },
+    {
+      "label": "Debug mode",
+      "feel": "required",
+      "binding": {
+        "type": "camunda:inputParameter",
+        "name": "debugMode"
+      },
+      "value": "false",
+      "constraints": {
+        "notEmpty": true
+      },
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "TRUE",
+          "value": "true"
+        },
+        {
+          "name": "FALSE",
+          "value": "false"
+        }
+      ],
+      "group": "debug"
     }
   ],
   "icon": {
