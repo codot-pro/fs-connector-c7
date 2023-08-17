@@ -23,6 +23,10 @@
     {
       "id": "output",
       "label": "Output Mapping"
+    },
+    {
+      "id": "debug",
+      "label": "Debug tools"
     }
   ],
   "properties": [
@@ -41,7 +45,7 @@
       "label": "Operation",
       "description": "Operation to be done",
       "type": "Dropdown",
-      "value": "operation",
+      "value": "get",
       "choices": [
         {
           "name": "Upload file",
@@ -63,17 +67,6 @@
       },
       "constraints": {
         "notEmpty": true
-      }
-    },
-    {
-      "label": "File path",
-      "description": "The path should be like the following path: \"src/main/resources/static\".",
-      "type": "String",
-      "feel": "required",
-      "group": "inputs",
-      "binding": {
-        "type": "camunda:inputParameter",
-        "name": "filePath"
       }
     },
     {
@@ -143,6 +136,7 @@
     {
       "label": "Result Variable",
       "description": "Name of variable to store the response in",
+      "value": "result",
       "group": "output",
       "type": "String",
       "constraints": {

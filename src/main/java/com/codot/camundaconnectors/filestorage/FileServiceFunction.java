@@ -24,7 +24,6 @@ public class FileServiceFunction implements JavaDelegate {
 			case "upload":
 				FileOperation.upload(
 						url,
-						(String) delegateExecution.getVariable("filePath"),
 						(String) delegateExecution.getVariable("fileName"),
 						response,
 						delegateExecution);
@@ -34,7 +33,6 @@ public class FileServiceFunction implements JavaDelegate {
 				FileOperation.get(
 						url,
 						(String) delegateExecution.getVariable("fileId"),
-						(String) delegateExecution.getVariable("filePath"),
 						response,
 						delegateExecution);
 				packRespond(delegateExecution);
@@ -64,7 +62,6 @@ public class FileServiceFunction implements JavaDelegate {
 
 	private void startEvent(DelegateExecution delegateExecution){
 		String log = " {operation="+ delegateExecution.getVariable("operation") +
-				", filePath="+delegateExecution.getVariable("filePath")+
 				", fileName=" + delegateExecution.getVariable("fileName") +
 				", fileId="+ delegateExecution.getVariable("fileId") +
 				", url="+ delegateExecution.getVariable("url") + "}";

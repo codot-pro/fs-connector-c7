@@ -17,8 +17,9 @@ import org.springframework.stereotype.Component;
 public class FileOperation {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileOperation.class);
 
-	public static void upload(String url, String filePath, String fileName, Response executionResponse, DelegateExecution delegateExecution) {
-		File file = new File(new File(filePath), fileName);
+	public static void upload(String url, String fileName, Response executionResponse, DelegateExecution delegateExecution) {
+		File file = new File(System.getProperty("java.io.tmpdir"), fileName);
+		System.out.println(file.getAbsolutePath());
 		if (file.exists()) {
 			Connection.Response response;
 			try {
@@ -49,10 +50,10 @@ public class FileOperation {
 				return;
 			}
 		}
-		LOGGER.error(Utility.printLog("File not created", delegateExecution));
+		LOGGER.error(Utility.printLog("File not found", delegateExecution));
 	}
 
-	public static void get(String url, String guid, String savePath, Response executionResponse, DelegateExecution delegateExecution) {
+	public static void get(String url, String guid, Response executionResponse, DelegateExecution delegateExecution) {
 		Connection.Response response;
 		try {
 			response =
@@ -61,7 +62,7 @@ public class FileOperation {
 			executionResponse.setStatusMsg(response.statusMessage());
 			if (response.statusCode() == 200) {
 				byte[] fileContent = response.bodyAsBytes();
-				File file = new File(new File(savePath), guid);
+				File file = new File(System.getProperty("java.io.tmpdir"), guid);
 				try (BufferedOutputStream outputStream = new BufferedOutputStream(Files.newOutputStream(file.toPath()))) {
 					for (byte item : fileContent) {
 						outputStream.write(item);
@@ -69,7 +70,7 @@ public class FileOperation {
 				} catch (IOException e) {
 					LOGGER.error(Utility.printLog(e.getClass().getSimpleName() + ": " + e, delegateExecution));
 				}
-				executionResponse.setResponse(file.getAbsolutePath());
+				executionResponse.setResponse(file.getName());
 			}
 		} catch (IOException e) {
 			LOGGER.error(Utility.printLog(e.getClass().getSimpleName() + ": " + e.getMessage(), delegateExecution));

@@ -12,12 +12,13 @@
     <bpmn:serviceTask id="Activity_03mntty" name="FIleService" camunda:modelerTemplate="com.codot.camundaconnectors.filestorage.c7" camunda:modelerTemplateVersion="1" camunda:class="com.codot.camundaconnectors.filestorage.FileServiceFunction">
       <bpmn:extensionElements>
         <camunda:inputOutput>
-          <camunda:inputParameter name="filePath">uploadFiles</camunda:inputParameter>
-          <camunda:inputParameter name="operation">upload</camunda:inputParameter>
-          <camunda:inputParameter name="fileName">test-image.jpg</camunda:inputParameter>
           <camunda:inputParameter name="fileId" />
+          <camunda:inputParameter name="fileName">test-image.jpg</camunda:inputParameter>
           <camunda:inputParameter name="debugMode">true</camunda:inputParameter>
-          <camunda:inputParameter name="url">https://file-service/api/file/</camunda:inputParameter>
+          <camunda:inputParameter name="operation">upload</camunda:inputParameter>
+          <camunda:inputParameter name="url">https://file-service/file/</camunda:inputParameter>
+          <camunda:outputParameter name="status_code">${status_code}</camunda:outputParameter>
+          <camunda:outputParameter name="status_msg">${status_msg}</camunda:outputParameter>
           <camunda:outputParameter name="result">${fs_result}</camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
@@ -33,7 +34,7 @@
       <bpmndi:BPMNShape id="Event_1gz2ozn_di" bpmnElement="Event_1gz2ozn">
         <dc:Bounds x="422" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0nsdgkq_di" bpmnElement="Activity_03mntty">
+      <bpmndi:BPMNShape id="Activity_1q1d7sb_di" bpmnElement="Activity_03mntty">
         <dc:Bounds x="270" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0wij7gk_di" bpmnElement="Flow_0wij7gk">
