@@ -17,7 +17,7 @@ public class FileServiceFunction implements JavaDelegate {
 
 		String url = Utility.validateURL((String) delegateExecution.getVariable("url"));
 		String operation = (String) delegateExecution.getVariable("operation");
-		Boolean debug = Boolean.TRUE;
+		Boolean debug = Boolean.parseBoolean((String) delegateExecution.getVariable("debug"));
 		if (debug) startEvent(delegateExecution);
 
 		switch (operation) {
