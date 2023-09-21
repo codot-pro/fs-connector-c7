@@ -2,7 +2,11 @@ package com.codot.camundaconnectors.filestorage;
 
 
 import java.io.*;
-import org.json.JSONObject;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
@@ -13,15 +17,14 @@ import org.springframework.stereotype.Component;
 public class FileOperation {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileOperation.class);
 
-	public static String upload(String url, String filePath, String fileName) {
-		LOGGER.info(
-				"Upload function has been called with the following values:"
-						+ " FilePath="	+ filePath
-						+ ", FileName=" + fileName
-						+ ", URL="+ url);
-		File file = new File(new File(filePath), fileName);
+	public static void upload(String url, String jwt, String fileName, Response executionResponse, DelegateExecution delegateExecution) {
+		File file = new File(System.getProperty("java.io.tmpdir"), fileName);
+
+		Map<String, String> headers = new HashMap<>();
+		headers.put("Content-Type", "multipart/form-data");
+		if (jwt != null) headers.put("Authorization", "Bearer " + jwt);
+
 		if (file.exists()) {
-			LOGGER.debug("File exists");
 			Connection.Response response;
 			try {
 				FileInputStream fileInputStream = new FileInputStream(file);
@@ -29,106 +32,81 @@ public class FileOperation {
 						Jsoup.connect(url)
 								.method(Connection.Method.POST)
 								.ignoreContentType(true)
-								.header("Content-Type", "multipart/form-data")
+								.headers(headers)
 								.data(
 										"file",
 										file.getName(),
 										fileInputStream,
-										"multipart/form-data") // Attach the file to the request
+										"multipart/form-data")
 								.execute();
 				fileInputStream.close();
-				if (response.statusCode() == 200) {
-					LOGGER.info("Response statusCode = 200. File uploaded");
-					JSONObject body = new JSONObject(response.body());
-					if (file.delete()) LOGGER.debug("File sent and deleted");
-					else LOGGER.error("File sent but not deleted");
-					return body.getString("file_guid");
-				}
-				JSONObject body = new JSONObject(response.body());
-				LOGGER.error(
-						"HTTP error "
-								+ response.statusCode()
-								+ " :"
-								+ response.statusMessage()
-								+ " - "
-								+ (body.has("message") ? body.getString("message") : ""));
-				throw new RuntimeException("Response statusCode != 200");
+
+				executionResponse.setStatusCode(Integer.toString(response.statusCode()));
+				executionResponse.setStatusMsg(response.statusMessage());
+				executionResponse.setResponse(response.body());
+
+				if (response.statusCode() == 200)
+					file.delete();
+				else LOGGER.error(Utility.printLog("File not uploaded", delegateExecution));
+				return;
 			} catch (IOException e) {
-				LOGGER.error(e.toString());
-				throw new RuntimeException(e);
+				LOGGER.error(Utility.printLog(e.getClass().getSimpleName() + ": " + e, delegateExecution));
+				return;
 			}
 		}
-		LOGGER.error("File not created");
-		throw new RuntimeException("File not created");
+		LOGGER.error(Utility.printLog("File not found", delegateExecution));
 	}
 
-	public static String get(String url, String guid, String savePath) {
-		LOGGER.info(
-				"Get function has been called with the following values:"
-						+ " GUID=" + guid
-						+ ", SavePath=" + savePath
-						+ ", URL="+ url);
+	public static void get(String url, String jwt, String guid, Response executionResponse, DelegateExecution delegateExecution) {
+		Map<String, String> headers = new HashMap<>();
+		if (jwt != null) headers.put("Authorization", "Bearer " + jwt);
+
 		Connection.Response response;
 		try {
 			response =
-					Jsoup.connect(url + guid).method(Connection.Method.GET).ignoreContentType(true).execute();
+					Jsoup
+							.connect(url + guid)
+							.headers(headers)
+							.method(Connection.Method.GET)
+							.ignoreContentType(true)
+							.execute();
+			executionResponse.setStatusCode(Integer.toString(response.statusCode()));
+			executionResponse.setStatusMsg(response.statusMessage());
 			if (response.statusCode() == 200) {
-				LOGGER.info("Response statusCode = 200. File received");
 				byte[] fileContent = response.bodyAsBytes();
-				File file = new File(new File(savePath), guid);
-				try (BufferedOutputStream outputStream =
-						     new BufferedOutputStream(new FileOutputStream(file))) {
-					LOGGER.debug("file on path \"" + savePath + guid + "\" created");
+				File file = new File(System.getProperty("java.io.tmpdir"), guid);
+				try (BufferedOutputStream outputStream = new BufferedOutputStream(Files.newOutputStream(file.toPath()))) {
 					for (byte item : fileContent) {
 						outputStream.write(item);
 					}
-					LOGGER.debug("Byte stream was written");
 				} catch (IOException e) {
-					LOGGER.error(e.toString());
-					throw new RuntimeException(e);
+					LOGGER.error(Utility.printLog(e.getClass().getSimpleName() + ": " + e, delegateExecution));
 				}
-				return savePath + guid;
+				executionResponse.setResponse(file.getName());
 			}
-			JSONObject body = new JSONObject(response.body());
-			LOGGER.error(
-					"HTTP error "
-							+ response.statusCode()
-							+ " :"
-							+ response.statusMessage()
-							+ " - "
-							+ (body.has("message") ? body.getString("message") : ""));
-			throw new RuntimeException("Response statusCode != 200");
 		} catch (IOException e) {
-			LOGGER.error(e.toString());
-			throw new RuntimeException(e);
+			LOGGER.error(Utility.printLog(e.getClass().getSimpleName() + ": " + e.getMessage(), delegateExecution));
 		}
 	}
 
-	public static String delete(String url, String guid) {
-		LOGGER.info("Delete function has been called with the following values: GUID=" + guid + ", URL="+ url);
+	public static void delete(String url, String jwt, String guid, Response executionResponse, DelegateExecution delegateExecution) {
+		Map<String, String> headers = new HashMap<>();
+		if (jwt != null) headers.put("Authorization", "Bearer " + jwt);
+
 		Connection.Response response;
 		try {
 			response =
-					Jsoup.connect(url + guid)
+					Jsoup
+							.connect(url + guid)
+							.headers(headers)
 							.method(Connection.Method.DELETE)
 							.ignoreContentType(true)
 							.execute();
-			JSONObject body = new JSONObject(response.body());
-			if (response.statusCode() != 200) {
-				LOGGER.error(
-						"HTTP error "
-								+ response.statusCode()
-								+ " :"
-								+ response.statusMessage()
-								+ " - "
-								+ (body.has("message") ? body.getString("message") : ""));
-				throw new RuntimeException("Response statusCode != 200");
-			}
-			LOGGER.info("Response statusCode = 200. File deleted");
-			return body.getString("message");
+			executionResponse.setStatusCode(Integer.toString(response.statusCode()));
+			executionResponse.setStatusMsg(response.statusMessage());
+			executionResponse.setResponse(response.body());
 		} catch (IOException e) {
-			LOGGER.error(e.toString());
-			throw new RuntimeException(e);
+			LOGGER.error(Utility.printLog(e.getClass().getSimpleName() + ": " + e.getMessage(), delegateExecution));
 		}
 	}
 }

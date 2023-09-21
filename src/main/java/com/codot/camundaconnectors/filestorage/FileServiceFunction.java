@@ -9,57 +9,73 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class FileServiceFunction implements JavaDelegate {
+	private final Response response = new Response();
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileServiceFunction.class);
 
 	@Override
-	public void execute(DelegateExecution delegateExecution) throws Exception {
-		// using config.properties
-		// Properties properties = getProperties();
-		// String url = validateURL(properties.getProperty("url"));
+	public void execute(DelegateExecution delegateExecution) {
 
-		// using template
-
-		String url = validateURL((String) delegateExecution.getVariable("url"));
-
+		String url = Utility.validateURL((String) delegateExecution.getVariable("url"));
+		String jwt = (String) delegateExecution.getVariable("jwt");
 		String operation = (String) delegateExecution.getVariable("operation");
+		boolean debug = Boolean.parseBoolean((String) delegateExecution.getVariable("debugMode"));
+		if (debug) startEvent(delegateExecution);
+
 		switch (operation) {
-			case "upload" -> {
-				String guid = FileOperation.upload(
+			case "upload":
+				FileOperation.upload(
 						url,
-						(String) delegateExecution.getVariable("filePath"),
-						(String) delegateExecution.getVariable("fileName"));
-				delegateExecution.setVariable("fs_result", guid); // guid
-			}
-			case "get" -> {
-				String path = FileOperation.get(
+						jwt,
+						(String) delegateExecution.getVariable("fileName"),
+						response,
+						delegateExecution);
+				packRespond(delegateExecution);
+				break;
+			case "get":
+				FileOperation.get(
 						url,
+						jwt,
 						(String) delegateExecution.getVariable("fileId"),
-						(String) delegateExecution.getVariable("filePath"));
-				delegateExecution.setVariable("fs_result", path); // path
-			}
-			case "delete" -> {
-				String answer = FileOperation.delete(
+						response,
+						delegateExecution);
+				packRespond(delegateExecution);
+			 	break;
+			case "delete":
+				FileOperation.delete(
 						url,
-						(String) delegateExecution.getVariable("fileId"));
-				delegateExecution.setVariable("fs_result", answer); // deleteResult
-			}
-			default -> throw new RuntimeException("Operation not found");
+						jwt,
+						(String) delegateExecution.getVariable("fileId"),
+						response,
+						delegateExecution);
+				packRespond(delegateExecution);
+				break;
+			default:
+				response.setStatusCode("400");
+				response.setStatusMsg("Bad request. Invalid operation");
+				packRespond(delegateExecution);
+				break;
 		}
+		if (debug) endEvent(delegateExecution);
 	}
 
-	// using config.properties
-	private static Properties getProperties() throws IOException {
-		FileInputStream fis;
-		Properties property = new Properties();
-
-		fis = new FileInputStream("src/main/resources/config.properties");
-		property.load(fis);
-		fis.close();
-
-		return property;
+	private void packRespond(DelegateExecution delegateExecution){
+		delegateExecution.setVariable("fs_result", response.getResponse());
+		delegateExecution.setVariable("status_code", response.getStatusCode());
+		delegateExecution.setVariable("status_msg", response.getStatusMsg());
 	}
 
-	private static String validateURL(String URL){
-		return URL.endsWith("/") ? URL : URL + "/";
+	private void startEvent(DelegateExecution delegateExecution){
+		String log = " {operation="+ delegateExecution.getVariable("operation") +
+				", fileName=" + delegateExecution.getVariable("fileName") +
+				", fileId="+ delegateExecution.getVariable("fileId") +
+				", jwt="+ delegateExecution.getVariable("jwt") +
+				", url="+ delegateExecution.getVariable("url") + "}";
+		LOGGER.info(Utility.printLog(log, delegateExecution));
+	}
+
+	private void endEvent(DelegateExecution delegateExecution){
+		LOGGER.info(Utility.printLog("{statusCode: " + response.getStatusCode() + ", statusMsg: "+ response.getStatusMsg() +
+						", response: " + response.getResponse() + "}",
+				delegateExecution));
 	}
 }
