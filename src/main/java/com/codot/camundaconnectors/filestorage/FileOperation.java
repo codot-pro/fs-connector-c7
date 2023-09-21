@@ -3,10 +3,10 @@ package com.codot.camundaconnectors.filestorage;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.camunda.feel.syntaxtree.In;
-import org.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
@@ -17,9 +17,13 @@ import org.springframework.stereotype.Component;
 public class FileOperation {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileOperation.class);
 
-	public static void upload(String url, String fileName, Response executionResponse, DelegateExecution delegateExecution) {
+	public static void upload(String url, String jwt, String fileName, Response executionResponse, DelegateExecution delegateExecution) {
 		File file = new File(System.getProperty("java.io.tmpdir"), fileName);
-		System.out.println(file.getAbsolutePath());
+
+		Map<String, String> headers = new HashMap<>();
+		headers.put("Content-Type", "multipart/form-data");
+		if (jwt != null) headers.put("Authorization", "Bearer " + jwt);
+
 		if (file.exists()) {
 			Connection.Response response;
 			try {
@@ -28,12 +32,12 @@ public class FileOperation {
 						Jsoup.connect(url)
 								.method(Connection.Method.POST)
 								.ignoreContentType(true)
-								.header("Content-Type", "multipart/form-data")
+								.headers(headers)
 								.data(
 										"file",
 										file.getName(),
 										fileInputStream,
-										"multipart/form-data") // Attach the file to the request
+										"multipart/form-data")
 								.execute();
 				fileInputStream.close();
 
@@ -53,11 +57,19 @@ public class FileOperation {
 		LOGGER.error(Utility.printLog("File not found", delegateExecution));
 	}
 
-	public static void get(String url, String guid, Response executionResponse, DelegateExecution delegateExecution) {
+	public static void get(String url, String jwt, String guid, Response executionResponse, DelegateExecution delegateExecution) {
+		Map<String, String> headers = new HashMap<>();
+		if (jwt != null) headers.put("Authorization", "Bearer " + jwt);
+
 		Connection.Response response;
 		try {
 			response =
-					Jsoup.connect(url + guid).method(Connection.Method.GET).ignoreContentType(true).execute();
+					Jsoup
+							.connect(url + guid)
+							.headers(headers)
+							.method(Connection.Method.GET)
+							.ignoreContentType(true)
+							.execute();
 			executionResponse.setStatusCode(Integer.toString(response.statusCode()));
 			executionResponse.setStatusMsg(response.statusMessage());
 			if (response.statusCode() == 200) {
@@ -77,11 +89,16 @@ public class FileOperation {
 		}
 	}
 
-	public static void delete(String url, String guid, Response executionResponse, DelegateExecution delegateExecution) {
+	public static void delete(String url, String jwt, String guid, Response executionResponse, DelegateExecution delegateExecution) {
+		Map<String, String> headers = new HashMap<>();
+		if (jwt != null) headers.put("Authorization", "Bearer " + jwt);
+
 		Connection.Response response;
 		try {
 			response =
-					Jsoup.connect(url + guid)
+					Jsoup
+							.connect(url + guid)
+							.headers(headers)
 							.method(Connection.Method.DELETE)
 							.ignoreContentType(true)
 							.execute();

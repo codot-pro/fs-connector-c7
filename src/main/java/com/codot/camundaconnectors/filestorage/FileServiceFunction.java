@@ -16,14 +16,16 @@ public class FileServiceFunction implements JavaDelegate {
 	public void execute(DelegateExecution delegateExecution) {
 
 		String url = Utility.validateURL((String) delegateExecution.getVariable("url"));
+		String jwt = (String) delegateExecution.getVariable("jwt");
 		String operation = (String) delegateExecution.getVariable("operation");
-		Boolean debug = Boolean.parseBoolean((String) delegateExecution.getVariable("debug"));
+		boolean debug = Boolean.parseBoolean((String) delegateExecution.getVariable("debugMode"));
 		if (debug) startEvent(delegateExecution);
 
 		switch (operation) {
 			case "upload":
 				FileOperation.upload(
 						url,
+						jwt,
 						(String) delegateExecution.getVariable("fileName"),
 						response,
 						delegateExecution);
@@ -32,6 +34,7 @@ public class FileServiceFunction implements JavaDelegate {
 			case "get":
 				FileOperation.get(
 						url,
+						jwt,
 						(String) delegateExecution.getVariable("fileId"),
 						response,
 						delegateExecution);
@@ -40,6 +43,7 @@ public class FileServiceFunction implements JavaDelegate {
 			case "delete":
 				FileOperation.delete(
 						url,
+						jwt,
 						(String) delegateExecution.getVariable("fileId"),
 						response,
 						delegateExecution);
@@ -64,6 +68,7 @@ public class FileServiceFunction implements JavaDelegate {
 		String log = " {operation="+ delegateExecution.getVariable("operation") +
 				", fileName=" + delegateExecution.getVariable("fileName") +
 				", fileId="+ delegateExecution.getVariable("fileId") +
+				", jwt="+ delegateExecution.getVariable("jwt") +
 				", url="+ delegateExecution.getVariable("url") + "}";
 		LOGGER.info(Utility.printLog(log, delegateExecution));
 	}

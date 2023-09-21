@@ -106,6 +106,17 @@
       }
     },
     {
+      "label": "JWT",
+      "description": "Fill this field if authorization is required, otherwise leave it blank",
+      "type": "String",
+      "feel": "required",
+      "group": "inputs",
+      "binding": {
+        "type": "camunda:inputParameter",
+        "name": "jwt"
+      }
+    },
+    {
       "label": "status code",
       "description": "Name of variable to store the response in",
       "group": "output",
